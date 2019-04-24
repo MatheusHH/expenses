@@ -156,6 +156,8 @@ module RailsAdmin
               pdf.start_new_page
               g = Gruff::Pie.new 900
               g.theme = Gruff::Themes::PASTEL
+              g.add_color('#FF00EF')
+              g.add_color('#0033FF')
               g.title = "Demonstrativo de Despesas"
               @datasets.each do |data|
                 g.data(data[0], data[1])
@@ -167,12 +169,48 @@ module RailsAdmin
               pdf.image "public/graph.png", :scale => 0.50
               pdf.move_down 10
 
-              pdf.text "Despesas Detalhadas:", :size => 15, :style => :bold, :align => :justify
-              pdf.move_down 12
+              #pdf.text "Despesas Detalhadas:", :size => 15, :style => :bold, :align => :justify
+              #pdf.move_down 12
 
-              pdf.text "Alimentação: #{total_alimentacao_porc.round} %"
+              #pdf.text "Alimentação: #{total_alimentacao_porc.round} %"
+
+              #################### TESTE ###############################
+              pdf.start_new_page
+
+              @category = Category.all
+
+              datasets1 = {}
+              total_teste = 0
+              @category.each do |c|
+                total_teste = 0
+                name = c.name
+                @expenses.each do |e|
+                  if e.category.name == name
+                    total_teste += e.amount
+                  end
+                end
+                total_teste_porc = (total_teste * 100) / total
+                datasets1["#{c.name}"] = total_teste     
+              end
+
+              pdf.start_new_page
+              g1 = Gruff::Pie.new 900
+              g1.theme = Gruff::Themes::PASTEL
+              g1.add_color('#FF00EF')
+              g1.add_color('#0033FF')
+              g1.title = "Demonstrativo de Despesas"
+              datasets1.each do |data|
+                g1.data(data[0], data[1])
+              end
+              ##########################################################
+
+              g1.write("public/graph1.png")
+
+              pdf.image "public/graph1.png", :scale => 0.50
+              pdf.move_down 10
 
               pdf.render_file("public/#{ramdom_file_name}.pdf")
+
             end
 
             File.open("public/#{ramdom_file_name}.pdf", 'r') do |f|
@@ -180,6 +218,8 @@ module RailsAdmin
             end
             File.delete("public/#{ramdom_file_name}.pdf")
             File.delete("public/graph.png")
+
+            File.delete("public/graph1.png")
 
           end
         end

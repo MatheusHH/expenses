@@ -21,7 +21,8 @@ gem 'devise'
 gem 'cancancan', '~> 1.15.0'
 gem 'rails_admin_rollincode', '~> 1.0'
 gem 'popper_js', '~> 1.14.5'
-gem 'bootstrap-sass' 
+gem 'bootstrap-sass'
+gem 'jquery-rails' 
 # Gem para gerar os pdfs
 gem 'prawn-rails'
 # Gem para gerar os gráficos

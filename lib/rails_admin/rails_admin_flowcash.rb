@@ -66,6 +66,54 @@ module RailsAdmin
                 pdf.text "Seu saldo de #{formatted_currency(saldo)} está azul! Você possui #{formatted_currency(saldo)} positivo em seu caixa.", :color => "0000ff"
               end
 
+
+              @expenses_by_month = Expense.where('user_id = ?', current_user.id).where(:created_at => 1.month.ago.beginning_of_month..1.month.ago.end_of_month )
+              @receipts_by_month = Receipt.where('user_id = ?', current_user.id).where(:created_at => 1.month.ago.beginning_of_month..1.month.ago.end_of_month )
+
+              @expenses_current_month = Expense.where('user_id = ?', current_user.id).where(:created_at => Date.current.beginning_of_month..Date.current.end_of_month )
+              @receipts_current_month = Receipt.where('user_id = ?', current_user.id).where(:created_at => Date.current.beginning_of_month..Date.current.end_of_month )
+
+              total_expense_by_month = 0 
+              @expenses_by_month.each do |e|
+                total_expense_by_month += e.amount
+              end
+
+              total_receipt_by_month = 0 
+              @receipts_by_month.each do |e|
+                total_receipt_by_month += e.amount
+              end
+
+              total_expenses_current_month = 0
+              @expenses_current_month.each do |e|
+                total_expenses_current_month += e.amount
+              end
+
+              total_receipts_current_month = 0
+              @receipts_current_month.each do |e|
+                total_receipts_current_month += e.amount
+              end
+
+
+               @datasets = [
+                           ["Receitas", [total_receipts_current_month, total_receipt_by_month]],
+                           ["Despesas", [total_expenses_current_month, total_expense_by_month]],
+                           ]
+
+              pdf.start_new_page
+              g = Gruff::Bar.new(900)
+              g.title = 'Demonstrativo de Gastos X Despesas'
+              g.labels = {
+                0 => 'Mês Atual',
+                1 => 'Mês Anterior'
+              }
+              @datasets.each do |data|
+                g.data(data[0], data[1])
+              end
+              g.write("public/graph.png")
+
+              pdf.image "public/graph.png", :scale => 0.50
+              pdf.move_down 10
+
               pdf.render_file("public/#{ramdom_file_name}.pdf")
             end
 
@@ -73,6 +121,7 @@ module RailsAdmin
               send_data f.read.force_encoding('BINARY'), :filename => 'pdf', :type => "application/pdf", :disposition => "inline"
             end
             File.delete("public/#{ramdom_file_name}.pdf")
+            File.delete("public/graph.png")
           end
         end
         register_instance_option :link_icon do
