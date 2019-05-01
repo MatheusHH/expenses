@@ -66,7 +66,6 @@ module RailsAdmin
                 pdf.text "Seu saldo de #{formatted_currency(saldo)} está azul! Você possui #{formatted_currency(saldo)} positivo em seu caixa.", :color => "0000ff"
               end
 
-
               @expenses_by_month = Expense.where('user_id = ?', current_user.id).where(:created_at => 1.month.ago.beginning_of_month..1.month.ago.end_of_month )
               @receipts_by_month = Receipt.where('user_id = ?', current_user.id).where(:created_at => 1.month.ago.beginning_of_month..1.month.ago.end_of_month )
 

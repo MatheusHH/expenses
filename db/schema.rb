@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_19_231409) do
+ActiveRecord::Schema.define(version: 2019_05_01_170911) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,12 +34,12 @@ ActiveRecord::Schema.define(version: 2019_02_19_231409) do
   create_table "expenses", force: :cascade do |t|
     t.bigint "provider_id"
     t.bigint "category_id"
-    t.decimal "amount", precision: 8, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.date "duedate"
     t.date "paymentdate"
+    t.integer "amount_cents"
     t.index ["category_id"], name: "index_expenses_on_category_id"
     t.index ["provider_id"], name: "index_expenses_on_provider_id"
     t.index ["user_id"], name: "index_expenses_on_user_id"
@@ -57,10 +57,10 @@ ActiveRecord::Schema.define(version: 2019_02_19_231409) do
 
   create_table "receipts", force: :cascade do |t|
     t.bigint "description_id"
-    t.decimal "amount", precision: 8, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.integer "amount_cents"
     t.index ["description_id"], name: "index_receipts_on_description_id"
     t.index ["user_id"], name: "index_receipts_on_user_id"
   end

@@ -10,9 +10,9 @@ class Ability
         can :flow_cash
         can :manage, Provider, user_id: user.id
         can :manage, Expense, user_id: user.id
-        can :read, Category
+        can :manage, Category, user_id: user.id 
         can :manage, Receipt, user_id: user.id
-        can :read, Description
+        can :manage, Description, user_id: user.id
         can :edit, User
         #ver se o cancancan pode bloquear determinado campo
       elsif user.kind == 'manager'

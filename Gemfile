@@ -23,6 +23,8 @@ gem 'rails_admin_rollincode', '~> 1.0'
 gem 'popper_js', '~> 1.14.5'
 gem 'bootstrap-sass'
 gem 'jquery-rails' 
+gem "font-awesome-rails"
+gem 'money-rails', '~>1.12'
 # Gem para gerar os pdfs
 gem 'prawn-rails'
 # Gem para gerar os gráficos
