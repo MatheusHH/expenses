@@ -65,6 +65,18 @@ module RailsAdmin
               else
                 pdf.text "Seu saldo de #{formatted_currency(saldo)} está azul! Você possui #{formatted_currency(saldo)} positivo em seu caixa.", :color => "0000ff"
               end
+              pdf.move_down 10
+
+              header = ["Provider", "Amount"]
+              table_data = []
+              table_data << header
+              @expenses.map do |expense|
+                table_data << [expense.provider.name, formatted_currency(expense.amount)]
+              end
+              pdf.table(table_data)
+              #data = [["Provider", "Amount"]]  
+              #pdf.table(data, :header => true, :position => :center, :column_widths => [200, 100], :row_colors => ["F0F0F0", "FFFFCC"]) 
+             
 
               @expenses_by_month = Expense.where('user_id = ?', current_user.id).where(:created_at => 1.month.ago.beginning_of_month..1.month.ago.end_of_month )
               @receipts_by_month = Receipt.where('user_id = ?', current_user.id).where(:created_at => 1.month.ago.beginning_of_month..1.month.ago.end_of_month )
@@ -108,9 +120,9 @@ module RailsAdmin
               @datasets.each do |data|
                 g.data(data[0], data[1])
               end
-              g.write("public/graph.png")
+              g.write("public/#{ramdom_file_name}.png")
 
-              pdf.image "public/graph.png", :scale => 0.50
+              pdf.image "public/#{ramdom_file_name}.png", :scale => 0.50
               pdf.move_down 10
 
               pdf.render_file("public/#{ramdom_file_name}.pdf")
@@ -120,7 +132,7 @@ module RailsAdmin
               send_data f.read.force_encoding('BINARY'), :filename => 'pdf', :type => "application/pdf", :disposition => "inline"
             end
             File.delete("public/#{ramdom_file_name}.pdf")
-            File.delete("public/graph.png")
+            File.delete("public/#{ramdom_file_name}.png")
           end
         end
         register_instance_option :link_icon do
