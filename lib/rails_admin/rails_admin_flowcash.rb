@@ -66,16 +66,6 @@ module RailsAdmin
                 pdf.text "Seu saldo de #{formatted_currency(saldo)} está azul! Você possui #{formatted_currency(saldo)} positivo em seu caixa.", :color => "0000ff"
               end
               pdf.move_down 10
-
-              header = ["Provider", "Amount"]
-              table_data = []
-              table_data << header
-              @expenses.map do |expense|
-                table_data << [expense.provider.name, formatted_currency(expense.amount)]
-              end
-              pdf.table(table_data)
-              #data = [["Provider", "Amount"]]  
-              #pdf.table(data, :header => true, :position => :center, :column_widths => [200, 100], :row_colors => ["F0F0F0", "FFFFCC"]) 
              
 
               @expenses_by_month = Expense.where('user_id = ?', current_user.id).where(:created_at => 1.month.ago.beginning_of_month..1.month.ago.end_of_month )

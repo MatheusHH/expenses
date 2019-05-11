@@ -42,14 +42,27 @@ module RailsAdmin
               pdf.text "Relação Total de Despesas", :size => 15, :style => :bold, :align => :center
               pdf.move_down 12
 
-              @expenses.each do |e|
-                pdf.text "Fornededor: #{e.provider.name}, Valor: #{formatted_currency(e.amount)}, Data de Vencimento: #{e.duedate.strftime("%d/%m/%y")}, Categoria: #{e.category.name}",
-                  :size => 12, :align => :justify, :inline_format => true, :style => :bold
-                pdf.move_down 8
-
-                pdf.text "---------------------------------------------------------------------------------------------------------------"
-                total += e.amount
+              @expenses.each do |expense|
+                total += expense.amount
               end
+
+              header = ["Fornecedor", "Data de Vencimento", "Valor"]
+              table_data = []
+              table_data << header
+              @expenses.map do |expense|
+                table_data << [expense.provider.name, expense.duedate.strftime("%d/%m/%y"), formatted_currency(expense.amount)]
+              end
+              #pdf.table(table_data, :position => :center, :column_widths => [200, 100, 100], :row_colors => ["F0F0F0", "FFFFCC"])
+              pdf.table(table_data) do |t|
+                t.row(0).background_color = 'ffffff'
+                t.position = :center
+                t.column_widths = [200, 100, 100]
+                t.row_colors = ["F0F0F0", "FFFFCC"]
+              end
+              pdf.move_down 10
+              #data = [["Provider", "Amount"]]  
+              #pdf.table(data, :header => true, :position => :center, :column_widths => [200, 100], :row_colors => ["F0F0F0", "FFFFCC"]) 
+
               pdf.text "Total Despesas: #{formatted_currency(total)}", :size => 15, :align => :center, :inline_format => true, :style => :bold
               pdf.move_down 10
 
@@ -59,14 +72,26 @@ module RailsAdmin
 
               @expenses_em_aberto = Expense.where('user_id = ?', current_user.id).where(paymentdate: "")
               total_aberto = 0
+
               @expenses_em_aberto.each do |aberto|
-                pdf.text "Fornededor: #{aberto.provider.name}, Valor: #{formatted_currency(aberto.amount)}, Data de Vencimento: #{aberto.duedate.strftime("%d/%m/%y")}, Categoria: #{aberto.category.name}",
-                  :size => 12, :align => :justify, :inline_format => true, :style => :bold
-                pdf.move_down 8
-        
-                pdf.text "---------------------------------------------------------------------------------------------------------------"
                 total_aberto += aberto.amount
               end
+
+              header_aberto = ["Fornecedor", "Data de Vencimento", "Valor"]
+              table_data_aberto = []
+              table_data_aberto << header_aberto
+              @expenses_em_aberto.map do |expense|
+                table_data_aberto << [expense.provider.name, expense.duedate.strftime("%d/%m/%y"), formatted_currency(expense.amount)]
+              end
+              pdf.table(table_data_aberto) do |t|
+                t.row(0).background_color = 'ffffff'
+                t.position = :center
+                t.column_widths = [200, 100, 100]
+                t.row_colors = ["F0F0F0", "FFFFCC"]
+              end
+              #pdf.table(table_data_aberto, :position => :center, :column_widths => [200, 100], :row_colors => ["F0F0F0", "FFFFCC"])
+              pdf.move_down 10
+
               pdf.text "Total Despesas em aberto: #{formatted_currency(total_aberto)}", :size => 15, :align => :center, :inline_format => true, :style => :bold
               pdf.move_down 10
 
